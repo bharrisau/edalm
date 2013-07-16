@@ -1,6 +1,6 @@
 {
   "name": "edalm",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Library manager for EDA tools",
   "main": "index.js",
   "bin": {
