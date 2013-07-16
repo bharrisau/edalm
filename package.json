@@ -1,0 +1,29 @@
+{
+  "name": "edalm",
+  "version": "0.0.1",
+  "description": "Library manager for EDA tools",
+  "main": "index.js",
+  "dependencies": {
+    "coffee-script": "~1.6.3"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.6.3"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bharrisau/edalm.git"
+  },
+  "keywords": [
+    "eda",
+    "library",
+    "parts",
+    "pcb",
+    "kicad",
+    "circuit"
+  ],
+  "author": "Ben Harris <mail@bharr.is>",
+  "license": "CC-BY 3.0"
+}
