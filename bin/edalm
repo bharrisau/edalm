@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+require('coffee-script');
+var rc = require('rc')('edalm', {
+  parts: 'parts',
+  symbols: 'symbols',
+  footprints: 'footprints',
+  symbolTarget: 'eeSchema',
+  baseDir: './'
+});
+
+require('../src/edalm').run(rc);

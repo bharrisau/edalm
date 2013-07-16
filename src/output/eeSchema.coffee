@@ -1,6 +1,18 @@
 
 module.exports = (data, lib) ->
-  pins = data.symbol.pins.reduce (last, a) ->
+  ret = 'EESchema-LIBRARY Version 2.3  Date: '
+  ret += (new Date()).toUTCString() + '\n'
+
+  [{
+    filename: lib.symbolsLibName || 'edalm.lib'
+    contents: ret + data.map(each).join('\n')
+  }]
+
+each = (data) ->
+  contents = data.contents
+  contents.name ||= data.name
+
+  pins = contents.symbol.pins.reduce (last, a) ->
     side = a[3]
     last[side] ||= []
 
@@ -24,23 +36,22 @@ module.exports = (data, lib) ->
     last
   , {}
 
-  hSpacing = data.symbol.hSpacing || data.symbol.spacing || 100
-  vSpacing = data.symbol.vSpacing || data.symbol.spacing || 100
-  pinLength = data.symbol.pinLength || 300
+  hSpacing = contents.symbol.hSpacing || contents.symbol.spacing || 100
+  vSpacing = contents.symbol.vSpacing || contents.symbol.spacing || 100
+  pinLength = contents.symbol.pinLength || 300
   quad = if pins.t or pins.b then true else false
   widthPins = Math.max((pins.t || []).length, (pins.b || []).length)
-  width = Math.max(data.symbol.width || 1400, (widthPins+1)*hSpacing)
+  width = Math.max(contents.symbol.width || 400, (widthPins+1)*hSpacing)
   heightPins = Math.max((pins.l || []).length, (pins.r || []).length)
   topPins = Math.round((heightPins-1)*vSpacing/2)
-  top = Math.max(topPins + vSpacing, Math.round((data.symbol.height || 0)/2))
+  top = Math.max(topPins + vSpacing, Math.round((contents.symbol.height || 0)/2))
   right = Math.round(width/2)
 
-  ret = 'EESchema-LIBRARY Version 2.3  Date: '
-  ret += (new Date()).toUTCString() + '\n'
+  ret = ''
   ret += [
     'DEF'
-    data.name
-    data.ref || 'U'
+    contents.name
+    contents.ref || 'U'
     0
     30
     'Y'
@@ -52,7 +63,7 @@ module.exports = (data, lib) ->
 
   ret += [
     'F0'
-    '"' + (data.ref || 'U') + '"'
+    '"' + (contents.ref || 'U') + '"'
     right
     top + 50
     60
@@ -64,9 +75,9 @@ module.exports = (data, lib) ->
 
   ret += [
     'F1'
-    '"' + data.name + '"'
+    '"' + contents.name + '"'
     if quad then 0 else -1*right
-    if quad then 0 else top + 50
+    if quad then 0 else -1*(top + 50)
     60
     'H'
     'V'
@@ -76,7 +87,7 @@ module.exports = (data, lib) ->
 
   ret += [
     'F2'
-    '"' + data.name + '"'
+    '"' + contents.name + '"'
     0
     -1*vSpacing
     60
@@ -88,7 +99,7 @@ module.exports = (data, lib) ->
 
   ret += [
     'F3'
-    '"' + (data.documentation || '~') + '"'
+    '"' + (contents.documentation || '~') + '"'
     0
     vSpacing
     60
@@ -214,5 +225,3 @@ module.exports = (data, lib) ->
 
   ret += "ENDDRAW\nENDDEF"
   ret
-
-module.exports.ext = "lib"
