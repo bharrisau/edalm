@@ -1,7 +1,6 @@
 
 module.exports = (data, lib) ->
   pins = data.symbol.pins.reduce (last, a) ->
-    last ||= {}
     side = a[3]
     last[side] ||= []
 
@@ -23,6 +22,7 @@ module.exports = (data, lib) ->
       name: a[1]
       type: type
     last
+  , {}
 
   hSpacing = data.symbol.hSpacing || data.symbol.spacing || 100
   vSpacing = data.symbol.vSpacing || data.symbol.spacing || 100
