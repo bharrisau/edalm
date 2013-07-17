@@ -1,11 +1,25 @@
 #!/usr/bin/env node
 require('coffee-script');
-var rc = require('rc')('edalm', {
-  parts: 'parts',
-  symbols: 'symbols',
-  footprints: 'footprints',
-  symbolTarget: 'eeSchema',
-  baseDir: './'
-});
 
-require('../src/edalm').run(rc);
+var opt = require('optimist')
+  .usage('\nUsage: $0')
+  .alias('h', 'help').describe('h', 'Shows this help text')
+  .describe('baseDir [directory]', 'Base directory for folders')
+  .describe('parts [directory]', 'Folder containing part definitions')
+  .describe('symbols [directory]', 'Folder for symbol output')
+  .describe('footprints [directory]', 'Folder for footprint output')
+  .describe('symbolTarget [target]', 'Target program for symbols')
+
+if (opt.argv.help) {
+  opt.showHelp();
+} else {
+  var rc = require('rc')('edalm', {
+    parts: 'parts',
+    symbols: 'symbols',
+    footprints: 'footprints',
+    symbolTarget: 'eeSchema',
+    baseDir: './'
+  }, opt.argv);
+
+  require('../src/edalm').run(rc);
+}
