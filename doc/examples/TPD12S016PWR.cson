@@ -1,0 +1,41 @@
+{
+  documentation: "http://www.ti.com/lit/ds/symlink/tpd12s016.pdf"
+  symbol:
+    width: 900
+    pins: [
+      [24, "VCCA", "power", "l"]
+      [11, "VCC5V", "power", "l"]
+      [12, "CT_HPD", "in", "l"]
+      [5, "LS_OE", "in", "l"]
+      [15, "CLK-", "in", "l"]
+      [16, "CLK+", "in", "l"]
+      [17, "D0-", "in", "l"]
+      [18, "D0+", "in", "l"]
+      [20, "D1-", "in", "l"]
+      [21, "D1+", "in", "l"]
+      [22, "D2-", "in", "l"]
+      [23, "D2+", "in", "l"]
+      [13, "5V_OUT", "power", "r"]
+      [1, "CEC_A", "io", "r"]
+      [2, "SCL_A", "io", "r"]
+      [3, "SDA_A", "io", "r"]
+      [4, "HPD_A", "out", "r"]
+      [7, "CEC_B", "io", "r"]
+      [8, "SCL_B", "io", "r"]
+      [9, "SDA_B", "io", "r"]
+      [10, "HPD_B", "in", "r"]
+      [6, "GND", "power", "n"]
+      [14, "GND", "power", "n"]
+      [19, "GND", "power", "n"]
+    ]
+  package:
+    sop:
+      pins: 24
+      A: [1.2, 1.0]
+      D: [7.9, 7.7]
+      E: [6.6, 6.2]
+      E1: [4.5, 4.3]
+      e: 0.65
+      b: [0.3, 0.19]
+      L: [0.75, 0.5]
+}

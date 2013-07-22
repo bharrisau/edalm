@@ -1,0 +1,22 @@
+{
+  documentation: "http://www.nxp.com/documents/data_sheet/IP4221CZ6-S.pdf"
+  symbol:
+    pins: [
+      [2, "GND", "power", "n"]
+      [5, "VCC", "power", "l"]
+      [1, "IO1", "in", "l"]
+      [3, "IO2", "in", "l"]
+      [4, "IO3", "in", "r"]
+      [6, "IO4", "in", "r"]
+    ]
+  package:
+    son:
+      pins: 6
+      A: [0.55, 0.5]
+      D: [1.5, 1.4]
+      E: [1.05, 0.95]
+      E1: [0.95, 0.87]
+      e: 0.5
+      b: [0.25, 0.17]
+      L: [0.35, 0.27]
+}

@@ -1,0 +1,49 @@
+{
+  documentation: "http://www.txccrystal.com/images/pdf/7q-gps.pdf"
+  symbol:
+    pins: [
+      [4, "VDD", "power", "l"]
+      [1, "AFC", "in", "l"]
+      [3, "OUT", "out", "r"]
+      [2, "GND", "power", "n"]
+    ]
+  package:
+    custom:
+      refdes: [0, -1.75]
+      pads: [
+        {
+          num: 1
+          location: [-1.515, 0.68]
+          size: [0.78, 0.87]
+          square: true
+        }
+        {
+          num: 2
+          location: [1.515, 0.68]
+          size: [0.78, 0.87]
+          square: true
+        }
+        {
+          num: 3
+          location: [1.515, -0.68]
+          size: [0.78, 0.87]
+          square: true
+        }
+        {
+          num: 4
+          location: [-1.515, -0.68]
+          size: [0.78, 0.87]
+          square: true
+        }
+      ]
+      silk: [
+        {
+          start: [-1.85, 1.35]
+          end: [1.05, 1.35]
+        }
+        {
+          start: [-1.05, -1.35]
+          end: [1.05, -1.35]
+        }
+      ]
+}

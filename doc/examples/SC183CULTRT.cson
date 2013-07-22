@@ -1,0 +1,33 @@
+{
+  documentation: "http://www.semtech.com/images/datasheet/sc183c.pdf"
+  symbol:
+    pins: [
+      [1, "PVIN", "power", "l"]
+      [2, "PVIN", "power", "l"]
+      [3, "AGND", "power", "n"]
+      [4, "AVIN", "power", "l"]
+      [5, "CTL0", "in", "l"]
+      [6, "CTL1", "in", "l"]
+      [7, "CTL2", "in", "l"]
+      [8, "CTL3", "in", "l"]
+      [11, "PGND", "power", "n"]
+      [12, "PGND", "power", "n"]
+      [13, "PGND", "power", "n"]
+      [14, "LX", "supply", "r"]
+      [15, "LX", "supply", "r"]
+      [16, "LX", "supply", "r"]
+      [10, "VOUT", "power", "r"]
+    ]
+  package:
+    qfn:
+      pins: 16
+      A: [0.6, 0.5]
+      D: [3.1, 2.9]
+      E: [3.1, 2.9]
+      E1: [3.1, 2.9]
+      D2: [1.8, 1.55]
+      E2: [1.8, 1.55]
+      e: 0.5
+      b: [0.3, 0.18]
+      L: [0.5, 0.3]
+}

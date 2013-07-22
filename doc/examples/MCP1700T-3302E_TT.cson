@@ -1,0 +1,19 @@
+{
+  documentation: "http://ww1.microchip.com/downloads/en/DeviceDoc/21826b.pdf"
+  symbol:
+    pins: [
+      [1, "GND", "power", "n"]
+      [3, "VIN", "power", "l"]
+      [2, "VOUT", "supply", "r"]
+    ]
+  package:
+    sot:
+      pins: 3
+      A: [1.12, 0.89]
+      D: [3.05, 2.67]
+      E: [2.64, 2.1]
+      E1: [1.4, 1.16]
+      e: 1.9
+      b: [0.54, 0.3]
+      L: [0.6, 0.13]
+}
