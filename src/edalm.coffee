@@ -1,53 +1,87 @@
 coffee = require 'coffee-script'
 fs = require 'fs'
 path = require 'path'
-options = {}
 
-module.exports =
-  run: (opt) ->
-    options = opt
-    partsPath = path.resolve options.baseDir, options.parts
-    fs.readdir partsPath, processFolder.bind({partsPath: partsPath})
+class EDALM
+  constructor: (@options) ->
+    @lib =
+      textHeight: 0.8
+      silkWidth: 0.12
+    require('./utils/ipc')(@lib)
+    footprints = path.join(path.dirname(module.filename), 'footprints')
+    fs.readdirSync(footprints).forEach (a) =>
+      require('./footprints/' + a)(@lib)
 
-handleError = (err) ->
-  console.log err
-  process.exit(1)
+  run: () =>
+    partsPath = path.resolve @options.baseDir, @options.parts
+    fs.readdir partsPath, @processFolder
 
-processFolder = (err, files) ->
-  return handleError(err) if err
+  handleError: (err) =>
+    console.log err
+    process.exit(1)
 
-  data = files.map (a) =>
-    path.join(@partsPath, a)
-  .map(processFile)
-  .filter (a) -> a.contents
+  processFolder: (err, files) =>
+    if err
+      console.log "Unable to open parts folder: " + err.path
+      process.exit(1)
 
-  generateSymbols(data) if options.symbolTarget
+    data = files.map (a) =>
+      path.join(@options.baseDir, @options.parts, a)
+    .map(@processFile)
+    .filter (a) -> a.contents
 
-#Synchronous function, takes a file name - returns the object
-processFile = (file) ->
-  ext = path.extname(file)
-  name = path.basename file, ext
-  ext = ext.slice(1).toLowerCase()
+    @generateSymbols(data) if @options.symbols
+    @generateFootprints(data) if @options.footprints
 
-  contents = switch ext
-    when 'cson' then processCSON file
-    when 'js', 'json', 'coffee' then require(file)
-    else null
+  #Synchronous function, takes a file name - returns the object
+  processFile: (file) =>
+    ext = path.extname(file)
+    name = path.basename file, ext
+    ext = ext.slice(1).toLowerCase()
 
-  {
-    name: name
-    contents: contents
-  }
+    contents = switch ext
+      when 'cson' then @processCSON file
+      when 'js', 'json', 'coffee' then require(file)
+      else null
 
-processCSON = (file) ->
-  coffee.eval(fs.readFileSync(file).toString(), {sandbox:true})
+    {
+      name: name
+      contents: contents
+    }
 
-generateSymbols = (data) ->
-  generator = require('./output/' + options.symbolTarget)
+  processCSON: (file) =>
+    coffee.eval(fs.readFileSync(file).toString(), {sandbox:true})
 
-  processedData = generator data, options
-  processedData.forEach writeFile
+  generateSymbols: (data) =>
+    generator = require('./output/' + @options.symbolTarget)
 
-writeFile = (data) ->
-  fileName = path.resolve options.baseDir, options.symbols, data.filename
-  fs.writeFile fileName, data.contents
+    processedData = generator data, @options
+    processedData.forEach @writeFile
+
+  generateFootprints: (data) =>
+    data = data.map (a) =>
+      ret = null
+      for type of a.contents.package
+        if @lib[type]
+          ret = @lib[type].run a.contents.package[type]
+        else
+          console.log "Unknown package: " + type
+      {
+        name: a.name
+        contents: ret
+      }
+    .filter (a) -> a.contents
+          
+    generator = require('./output/' + @options.footprintTarget)
+
+    processedData = generator data, @options
+    processedData.map (a) =>
+      filename: path.join @options.footprintDir, a.filename
+      contents: a.contents
+    .forEach @writeFile
+
+  writeFile: (data) =>
+    fileName = path.resolve @options.baseDir, data.filename
+    fs.writeFile fileName, data.contents
+
+module.exports = (opt) -> new EDALM(opt)

@@ -2,24 +2,31 @@
 require('coffee-script');
 
 var opt = require('optimist')
-  .usage('\nUsage: $0')
+  .usage('\nUsage: $0 [symbols] [footprints]')
   .alias('h', 'help').describe('h', 'Shows this help text')
   .describe('baseDir [directory]', 'Base directory for folders')
   .describe('parts [directory]', 'Folder containing part definitions')
-  .describe('symbols [directory]', 'Folder for symbol output')
-  .describe('footprints [directory]', 'Folder for footprint output')
+  .describe('symbolDir [directory]', 'Folder for symbol output')
+  .describe('footprintDir [directory]', 'Folder for footprint output')
   .describe('symbolTarget [target]', 'Target program for symbols')
+  .describe('footprintTarget [target]', 'Target program for footprints')
 
-if (opt.argv.help) {
-  opt.showHelp();
-} else {
-  var rc = require('rc')('edalm', {
+var rc = require('rc')('edalm', {
     parts: 'parts',
-    symbols: 'symbols',
-    footprints: 'footprints',
+    symbolDir: 'symbols',
+    footprintDir: 'footprints',
     symbolTarget: 'eeSchema',
+    footprintTarget: 'pcbnew',
     baseDir: './'
   }, opt.argv);
 
-  require('../src/edalm').run(rc);
+rc.symbols = rc._.indexOf('symbols') >= 0;
+rc.footprints = rc._.indexOf('footprints') >= 0;
+
+var edalm = require('../src/edalm')(rc);
+
+if (rc.help || rc._[0] === 'help' || !(rc.symbols || rc.footprints)) {
+  opt.showHelp();
+} else {
+  edalm.run();
 }

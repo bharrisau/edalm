@@ -44,7 +44,8 @@ each = (data) ->
   width = Math.max(contents.symbol.width || 400, (widthPins+1)*hSpacing)
   heightPins = Math.max((pins.l || []).length, (pins.r || []).length)
   topPins = Math.round((heightPins-1)*vSpacing/2)
-  top = Math.max(topPins + vSpacing, Math.round((contents.symbol.height || 0)/2))
+  top = Math.max(topPins + vSpacing,
+    Math.round((contents.symbol.height || 0)/2))
   right = Math.round(width/2)
 
   ret = ''

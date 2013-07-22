@@ -1,5 +1,4 @@
-# pad {
-#   num
+# pad #   num
 #   location: [x, y]
 #   size: d or [x, y]
 #   drill: d or [x, y]
@@ -12,12 +11,19 @@
 module.exports = (data, lib) -> data.map(each, lib)
 
 each = (data) ->
+  name = data.name
+  data = data.contents
+
   ret = """
-        (module #{ data.name } (layer F.Cu)
+        (module #{ name } (layer F.Cu)
           (at 0 0)
-          (fp_text reference #{ data.name } (at 0 0) (layer F.SilkS)
-            (effects (font (size #{ data.font || 0.8} #{ data.font || 0.8}) (thickness #{ data.silkWidth || 0.12})))
+          (fp_text reference #{ name } (at #{ data.refdes.join(' ') }) (layer F.SilkS)
+            (effects (font (size #{ data.textHeight || 0.8} #{ data.textHeight || 0.8}) (thickness #{ data.silkWidth || 0.12})))
           )
+          (fp_text value Val** (at 0 0) (layer F.SilkS) hide
+            (effects (font (thickness 0.15)))
+          )
+
         """
 
   if data.pads
@@ -40,16 +46,19 @@ each = (data) ->
       location: a.location
       size: if a.size[1] then a.size else [a.size, a.size]
       drill: a.drill
-      lCu: if drill then '*.Cu' else if a.back then 'B.Cu' else 'F.Cu'
-      lMask: if drill then '*.Mask' else if a.back then 'B.Mask' else 'F.Mask'
+      lCu: if a.drill then '*.Cu' else if a.back then 'B.Cu' else 'F.Cu'
+      lMask: if a.drill then '*.Mask' else if a.back then 'B.Mask' else 'F.Mask'
       lPaste: if a.nopaste then '' else if a.back then 'B.Paste' else 'F.Paste'
       lSilk: if a.drill then 'F.Silk' else ''
     .map (a) ->
-      """
-        (pad #{ a.num } #{ a.type } #{ a.padShape  } (at #{ a.location.join(' ') }) (size #{ a.size.join(' ') }) (drill #{ if a.drill[1] then 'oval ' + a.drill.join(' ') else a.drill })
-          (layers #{ a.lCu } #{ a.lMask } #{ a.lPaste } #{ a.lSilk })
-        )
-      """
+      ret = "  (pad #{ a.num } #{ a.type } #{ a.padShape  }" +
+      " (at #{ a.location.join(' ') }) (size #{ a.size.join(' ') })"
+
+      if a.drill
+        ret += " (drill #{ if a.drill?[1] then 'oval ' + a.drill.join(' ') else a.drill })"
+
+      ret += "\n    (layers #{ a.lCu } #{ a.lMask } #{ a.lPaste } #{ a.lSilk })\n  )" 
+      ret
     .join('\n') + '\n'
 
   if data.silk
@@ -63,9 +72,7 @@ each = (data) ->
         when 'backMask' then 'B.Mask'
         else 'F.SilkS'
       width = a.width || data.silkWidth || 0.12
-      """
-        (fp_line (start #{ a.start.join(' ') }) (end #{ a.end.join(' ') }) (layer #{ layer }) (width #{ width }))
-      """
+      "  (fp_line (start #{ a.start.join(' ') }) (end #{ a.end.join(' ') }) (layer #{ layer }) (width #{ width }))"
     .join('\n') + '\n'
 
   if data.arc
@@ -79,13 +86,25 @@ each = (data) ->
         when 'backMask' then 'B.Mask'
         else 'F.SilkS'
       width = a.width || data.silkWidth || 0.12
-      """
-        (fp_arc (start #{ a.location.join(' ') }) (end #{ a.start.join(' ') }) (angle #{ a.angle }) (layer #{ layer }) (width #{ width }))
-      """
+      "  (fp_arc (start #{ a.location.join(' ') }) (end #{ a.start.join(' ') }) (angle #{ a.angle }) (layer #{ layer }) (width #{ width }))"
+    .join('\n') + '\n'
+
+  #Draw the assembly outline on eco1
+  if data.assembly
+    ret += data.assembly.map (a) ->
+      width = a.width || data.silkWidth || 0.12
+      "  (fp_line (start #{ a.start.join(' ') }) (end #{ a.end.join(' ') }) (layer Eco1.User) (width #{ width }))"
+    .join('\n') + '\n'
+
+  #Draw the courtyard on eco2
+  if data.courtyard
+    ret += data.courtyard.map (a) ->
+      width = a.width || data.silkWidth || 0.12
+      "  (fp_line (start #{ a.start.join(' ') }) (end #{ a.end.join(' ') }) (layer Eco2.User) (width #{ width }))"
     .join('\n') + '\n'
 
   ret += ")"
   {
-    filename: data.name + '.kicad_mod'
+    filename: name + '.kicad_mod'
     contents: ret
   }
