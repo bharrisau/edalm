@@ -6,7 +6,7 @@ class EDALM
   constructor: (@options) ->
     @lib =
       textHeight: 0.8
-      silkWidth: 0.12
+      silkWidth: 0.15
     require('./utils/ipc')(@lib)
     footprints = path.join(path.dirname(module.filename), 'footprints')
     fs.readdirSync(footprints).forEach (a) =>
@@ -38,6 +38,8 @@ class EDALM
     ext = path.extname(file)
     name = path.basename file, ext
     ext = ext.slice(1).toLowerCase()
+
+    console.log "Processing #{ name }"
 
     contents = switch ext
       when 'cson' then @processCSON file
@@ -74,7 +76,7 @@ class EDALM
           
     generator = require('./output/' + @options.footprintTarget)
 
-    processedData = generator data, @options
+    processedData = generator data, @lib
     processedData.map (a) =>
       filename: path.join @options.footprintDir, a.filename
       contents: a.contents

@@ -27,7 +27,7 @@ class SOP
 
     #Add themal pads if needed
     if data.E2 && data.D2
-      ret.pads.push @dsl.util.thermal(data.pins+1, data.E2[0], data.D2[0])
+      ret.pads = ret.pads.concat @dsl.util.thermal(data.pins+1, data.E2[0], data.D2[0])
 
     #Add the silk data
     maxXPin = padData.X.offset + padData.X.padLength/2
@@ -55,6 +55,10 @@ class SOP
       ret.silk.push
         start: [-1*maxXBody, -1*maxYPinLeft - @dsl.silkWidth*1.5]
         end: [-1*maxXPin, -1*maxYPinLeft - @dsl.silkWidth*1.5]
+      if data.pins == 2
+        ret.silk.push
+          start: [-1*maxXBody, maxYPinLeft + @dsl.silkWidth*1.5]
+          end: [-1*maxXPin, maxYPinLeft + @dsl.silkWidth*1.5]
     else
       ret.silk.push
         start: [-1*maxXPin + padData.X.padLength, maxY]
@@ -62,6 +66,10 @@ class SOP
       ret.silk.push
         start: [-1*maxXBody, -1*maxY]
         end: [-1*maxXPin, -1*maxY]
+      if data.pins == 2
+        ret.silk.push
+          start: [-1*maxXBody, maxY]
+          end: [-1*maxXPin, maxY]
 
     if maxYPinRight + @dsl.silkWidth*1.5 < maxY - 0.2
       ret.silk.push
@@ -104,7 +112,7 @@ class SOP
 
     #Add the part courtyard
     courtyardX = Math.ceil((maxXPin + padData.X.courtyard)*20)/20
-    courtyardY = Math.ceil((maxYBody + padData.X.courtyard)*20)/20
+    courtyardY = Math.ceil((maxYBody + padData.Y.courtyard)*20)/20
     ret.courtyard = []
     ret.courtyard.push
       start: [-1*courtyardX, -1*courtyardY]

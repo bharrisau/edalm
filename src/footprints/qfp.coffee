@@ -45,7 +45,7 @@ class QFP
 
     #Add themal pads if needed
     if data.E2 && data.D2
-      ret.pads.push @dsl.util.thermal(data.pins+1, data.E2[0], data.D2[0])
+      ret.pads = ret.pads.concat @dsl.util.thermal(data.pins+1, data.E2[0], data.D2[0])
 
     #Add the silk data
     maxXPin = padData.X.offset + padData.X.padLength/2

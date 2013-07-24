@@ -1,7 +1,7 @@
 class IPC
-  F = 0.1
-  P = 0.1
-  dims = 1
+  F: 0.1
+  P: 0.1
+  dims: 1
 
   fillets:
     gullWing_g625:
@@ -34,6 +34,18 @@ class IPC
       jS: [-0.04, -0.04, -0.04]
       c: [0.1, 0.25, 0.5]
       round: [20, 20, 20]
+    chip_ge16:
+      jT: [0.15, 0.35, 0.55]
+      jH: [-0.05, -0.05, -0.05]
+      jS: [-0.05, 0, 0.05]
+      c: [0.1, 0.25, 0.5]
+      round: [5, 5, 10]
+    chip_l16:
+      jT: [0, 0.1, 0.2]
+      jH: [-0.05, -0.05, -0.05]
+      jS: [0, 0, 0.05]
+      c: [0.1, 0.15, 0.2]
+      round: [20, 20, 20]
 
   process: (data, useD) ->
     E = if useD then data.D else data.E 
@@ -53,12 +65,12 @@ class IPC
   round: (val, scale) -> Math.round(val*scale)/scale
 
   landGen: (data, fillet, input) =>
-    Z = @round(data.Lmin + 2*fillet.jT[dims] +
-      Math.sqrt(Math.pow(data.Ltol, 2) + F*F + P*P), fillet.round[0])
-    G = @round(data.Smax - 2*fillet.jH[dims] -
-      Math.sqrt(Math.pow(data.Stol, 2) + F*F + P*P), fillet.round[1])
-    X = @round(data.Wmin + 2*fillet.jS[dims] +
-      Math.sqrt(Math.pow(data.Wtol, 2) + F*F + P*P), fillet.round[2])
+    Z = @round(data.Lmin + 2*fillet.jT[@dims] +
+      Math.sqrt(Math.pow(data.Ltol, 2) + @F*@F + @P*@P), fillet.round[0])
+    G = @round(data.Smax - 2*fillet.jH[@dims] -
+      Math.sqrt(Math.pow(data.Stol, 2) + @F*@F + @P*@P), fillet.round[1])
+    X = @round(data.Wmin + 2*fillet.jS[@dims] +
+      Math.sqrt(Math.pow(data.Wtol, 2) + @F*@F + @P*@P), fillet.round[2])
 
     #Use thermal data to ensure minimum (0.2mm) gap between heel and thermal
     if input.E2
@@ -68,7 +80,7 @@ class IPC
       padWidth: X
       padLength: @round((Z - G)/2, 100)
       offset: @round((Z+G)/4, 100)
-      courtyard: fillet.c[dims]
+      courtyard: fillet.c[@dims]
     }
 
   gullWing: (data) ->
@@ -97,14 +109,43 @@ class IPC
     }
 
   thermal: (pin, x, y) ->
-    #Work out number of pads in x and y dir (max 2mm)
+    #Work out number of pads in x and y dir (max 3mm)
     #Return array of pads with correct solder amount
-    {
-      num: pin
-      location: [0, 0]
-      size: [x, y]
-      square: true
-    }
+    padsX = Math.ceil(x/3)
+    padsY = Math.ceil(y/3)
+    widthX = x/padsX
+    widthY = y/padsY
+    startX = -1*(padsX-1)*widthX/2
+    startY = -1*(padsY-1)*widthY/2
+    [0...padsX].reduce (prev, col) =>
+      prev.concat [0...padsY].map (row) =>
+        {
+          num: pin
+          location: [startX + col*widthX, startY + row*widthY]
+          size: [widthX, widthY]
+          square: true
+          solder: -0.125
+        }
+    , []
+
+  bga: (data) ->
+    ball = (data.b[0] + data.b[1])/2
+    scale = if ball >= 0.55 then 0.75 else 0.8
+    
+    land = @round(ball*scale, 20)
+
+    mask: 0.075
+    courtyard: @fillets.noLead.c[@dims]
+    size: @round(ball*scale, 20)
+
+  chip: (data) ->
+    data.b = data.E
+    size = (data.D[0]+data.D[1])/2
+    extra = @process data, true
+    fillet = if size >= 1.6 then @fillets.chip_ge16 else @fillets.chip_l16
+    @landGen extra, fillet, data
+
+
 
 module.exports = (dsl) ->
   if !dsl.util
