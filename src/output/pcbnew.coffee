@@ -13,7 +13,6 @@ module.exports = (data, lib) -> data.map(each, lib)
 each = (data) ->
   name = data.name
   data = data.contents
-  console.log "Generating #{ name }"
 
   ret = """
         (module #{ name } (layer F.Cu)

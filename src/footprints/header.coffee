@@ -10,7 +10,7 @@ class Header
     ret.pads = [0...data.y].reduce (prev, row) =>
       prev.concat [0...data.x].map (col) =>
         num: row*data.x + col + 1
-        square: row == 0 and col == 0
+        square: (row == 0 and col == 0) or data.square
         drill: data.hole
         size: data.pad
         location: [startX + col*data.e, startY + row*data.e]

@@ -56,9 +56,13 @@ class EDALM
 
   generateSymbols: (data) =>
     generator = require('./output/' + @options.symbolTarget)
+    data = data.filter (a) -> a.contents.symbol
 
     processedData = generator data, @options
-    processedData.forEach @writeFile
+    processedData.map (a) =>
+      filename: path.join @options.symbolDir, a.filename
+      contents: a.contents
+    .forEach @writeFile
 
   generateFootprints: (data) =>
     data = data.map (a) =>
