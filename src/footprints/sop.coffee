@@ -15,12 +15,12 @@ class SOP
     #Left pads run down the left
     #Right pads run up the right
     ret.pads = [0...pinsLeft].map (a) ->
-      num: a+1
+      num: data.rename?[a] || a+1
       location: [padData.X.offset*-1, topLeftY + a*data.e]
       size: [padData.X.padLength, padData.X.padWidth]
       square: true
     .concat [0...pinsRight].map (a) ->
-      num: a+pinsLeft+1
+      num: data.rename?[a+pinsLeft] || a+pinsLeft+1
       location: [padData.X.offset, bottomRightY - a*data.e]
       size: [padData.X.padLength, padData.X.padWidth]
       square: true

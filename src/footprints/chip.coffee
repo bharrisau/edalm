@@ -8,13 +8,13 @@ class Chip
 
     ret.pads = [
       {
-        num: 1
+        num: data.rename?[0] || 1
         location: [-1*padData.offset, 0]
         size: [padData.padLength, padData.padWidth]
         square: true
       }
       {
-        num: 2
+        num: data.rename?[1] || 2
         location: [padData.offset, 0]
         size: [padData.padLength, padData.padWidth]
         square: true
