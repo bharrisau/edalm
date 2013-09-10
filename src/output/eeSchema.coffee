@@ -11,6 +11,8 @@ module.exports = (data, lib) ->
 each = (data) ->
   contents = data.contents
   contents.name ||= data.name
+  if lib.namePrefix
+    contents.name = lib.namePrefix + ":" + contents.name
 
   pins = contents.symbol.pins.reduce (last, a) ->
     side = a[3]

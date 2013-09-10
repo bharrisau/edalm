@@ -7,6 +7,7 @@ class EDALM
     @lib =
       textHeight: 0.8
       silkWidth: 0.15
+      namePrefix: 'edalm'
     require('./utils/ipc')(@lib)
     footprints = path.join(path.dirname(module.filename), 'footprints')
     fs.readdirSync(footprints).forEach (a) =>
