@@ -10,18 +10,20 @@ class SOP
     pinsLeft = (data.pins + (if odd then 1 else 0)) / 2
     pinsRight = data.pins - pinsLeft
 
-    topLeftY = (pinsLeft-1) * data.e / 2 * -1
-    bottomRightY = (pinsRight-1) * data.e / 2
+    leftPitch = data.e
+    rightPitch = if data.pins == 5 then data.e*2 else data.e
+    topLeftY = (pinsLeft-1) * leftPitch / 2 * -1
+    bottomRightY = (pinsRight-1) * rightPitch / 2
     #Left pads run down the left
     #Right pads run up the right
     ret.pads = [0...pinsLeft].map (a) ->
       num: data.rename?[a] || a+1
-      location: [padData.X.offset*-1, topLeftY + a*data.e]
+      location: [padData.X.offset*-1, topLeftY + a*leftPitch]
       size: [padData.X.padLength, padData.X.padWidth]
       square: true
     .concat [0...pinsRight].map (a) ->
       num: data.rename?[a+pinsLeft] || a+pinsLeft+1
-      location: [padData.X.offset, bottomRightY - a*data.e]
+      location: [padData.X.offset, bottomRightY - a*rightPitch]
       size: [padData.X.padLength, padData.X.padWidth]
       square: true
 
