@@ -5,6 +5,8 @@ Library manager for EDA tools.
 
 ## Installation
 
+ edalm is built on NodeJS, get the latest version for your platform here [http://nodejs.org/download/](http://nodejs.org/download/).
+
     $ npm install -g edalm
     
 ## Quick Start
